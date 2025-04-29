@@ -1,0 +1,225 @@
+{
+  "users": [
+    {
+      "email": "admin@school.com",
+      "password": "admin123",
+      "role": "admin",
+      "school_id": "65b0e6293e9f76a9694d84b4"
+    },
+    {
+      "email": "school@example.com",
+      "password": "school123",
+      "role": "school",
+      "school_id": "65b0e6293e9f76a9694d84b4"
+    },
+    {
+      "email": "trustee@example.com",
+      "password": "trustee123",
+      "role": "trustee",
+      "school_id": "65b0e6293e9f76a9694d84b4"
+    }
+  ],
+  "students": [
+    {
+      "name": "John Doe",
+      "id": "STU123",
+      "email": "john@example.com"
+    },
+    {
+      "name": "Jane Smith",
+      "id": "STU124",
+      "email": "jane@example.com"
+    },
+    {
+      "name": "Mike Johnson",
+      "id": "STU125",
+      "email": "mike@example.com"
+    }
+  ],
+  "payments": [
+    {
+      "amount": 1000,
+      "student_info": {
+        "name": "John Doe",
+        "id": "STU123",
+        "email": "john@example.com"
+      }
+    },
+    {
+      "amount": 2000,
+      "student_info": {
+        "name": "Jane Smith",
+        "id": "STU124",
+        "email": "jane@example.com"
+      }
+    },
+    {
+      "amount": 1500,
+      "student_info": {
+        "name": "Mike Johnson",
+        "id": "STU125",
+        "email": "mike@example.com"
+      }
+    }
+  ],
+  "webhook_payloads": [
+    {
+      "status": 200,
+      "order_info": {
+        "order_id": "{{collect_request_id}}",
+        "order_amount": 1000,
+        "transaction_amount": 1000,
+        "gateway": "PhonePe",
+        "bank_reference": "YESBNK222",
+        "status": "success",
+        "payment_mode": "upi",
+        "payment_details": "success@ybl",
+        "Payment_message": "payment success",
+        "payment_time": "2024-04-23T08:14:21.945+00:00",
+        "error_message": "NA"
+      }
+    },
+    {
+      "status": 200,
+      "order_info": {
+        "order_id": "{{collect_request_id}}",
+        "order_amount": 2000,
+        "transaction_amount": 2000,
+        "gateway": "Razorpay",
+        "bank_reference": "RAZOR333",
+        "status": "success",
+        "payment_mode": "card",
+        "payment_details": "card_1234",
+        "Payment_message": "payment success",
+        "payment_time": "2024-04-23T08:15:21.945+00:00",
+        "error_message": "NA"
+      }
+    },
+    {
+      "status": 400,
+      "order_info": {
+        "order_id": "{{collect_request_id}}",
+        "order_amount": 1500,
+        "transaction_amount": 0,
+        "gateway": "PhonePe",
+        "bank_reference": "FAIL444",
+        "status": "failed",
+        "payment_mode": "upi",
+        "payment_details": "failed@ybl",
+        "Payment_message": "payment failed",
+        "payment_time": "2024-04-23T08:16:21.945+00:00",
+        "error_message": "Insufficient funds"
+      }
+    }
+  ],
+  "test_scenarios": [
+    {
+      "name": "Successful Payment Flow",
+      "steps": [
+        {
+          "name": "Register User",
+          "endpoint": "/api/auth/register",
+          "method": "POST",
+          "data": {
+            "email": "test@example.com",
+            "password": "password123",
+            "role": "school",
+            "school_id": "65b0e6293e9f76a9694d84b4"
+          }
+        },
+        {
+          "name": "Login User",
+          "endpoint": "/api/auth/login",
+          "method": "POST",
+          "data": {
+            "email": "test@example.com",
+            "password": "password123"
+          }
+        },
+        {
+          "name": "Create Payment",
+          "endpoint": "/api/payments/create-payment",
+          "method": "POST",
+          "data": {
+            "amount": 1000,
+            "student_info": {
+              "name": "John Doe",
+              "id": "STU123",
+              "email": "john@example.com"
+            }
+          }
+        },
+        {
+          "name": "Check Payment Status",
+          "endpoint": "/api/payments/status/{{collect_request_id}}",
+          "method": "GET"
+        },
+        {
+          "name": "Process Webhook",
+          "endpoint": "/api/webhook",
+          "method": "POST",
+          "data": {
+            "status": 200,
+            "order_info": {
+              "order_id": "{{collect_request_id}}",
+              "order_amount": 1000,
+              "transaction_amount": 1000,
+              "gateway": "PhonePe",
+              "bank_reference": "YESBNK222",
+              "status": "success",
+              "payment_mode": "upi",
+              "payment_details": "success@ybl",
+              "Payment_message": "payment success",
+              "payment_time": "2024-04-23T08:14:21.945+00:00",
+              "error_message": "NA"
+            }
+          }
+        },
+        {
+          "name": "Get Transaction Status",
+          "endpoint": "/api/transactions/status/{{custom_order_id}}",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "name": "Failed Payment Flow",
+      "steps": [
+        {
+          "name": "Create Payment",
+          "endpoint": "/api/payments/create-payment",
+          "method": "POST",
+          "data": {
+            "amount": 1500,
+            "student_info": {
+              "name": "Mike Johnson",
+              "id": "STU125",
+              "email": "mike@example.com"
+            }
+          }
+        },
+        {
+          "name": "Process Failed Webhook",
+          "endpoint": "/api/webhook",
+          "method": "POST",
+          "data": {
+            "status": 400,
+            "order_info": {
+              "order_id": "{{collect_request_id}}",
+              "order_amount": 1500,
+              "transaction_amount": 0,
+              "gateway": "PhonePe",
+              "bank_reference": "FAIL444",
+              "status": "failed",
+              "payment_mode": "upi",
+              "payment_details": "failed@ybl",
+              "Payment_message": "payment failed",
+              "payment_time": "2024-04-23T08:16:21.945+00:00",
+              "error_message": "Insufficient funds"
+            }
+          }
+        }
+      ]
+    }
+  ]
+} 

@@ -1,0 +1,244 @@
+{
+  "info": {
+    "name": "School Payment Service API",
+    "description": "Collection for testing School Payment and Dashboard Application API endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\",\n    \"role\": \"school\",\n    \"school_id\": \"65b0e6293e9f76a9694d84b4\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/register",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login User",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Get Current User",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "me"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Create Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"amount\": 1000,\n    \"student_info\": {\n        \"name\": \"John Doe\",\n        \"id\": \"STU123\",\n        \"email\": \"john@example.com\"\n    }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/payments/create-payment",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "create-payment"]
+            }
+          }
+        },
+        {
+          "name": "Check Payment Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/payments/status/{{collect_request_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "payments", "status", "{{collect_request_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transactions",
+      "item": [
+        {
+          "name": "Get All Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/transactions?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "transactions"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get School Transactions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/transactions/school/{{school_id}}?page=1&limit=10",
+              "host": ["{{base_url}}"],
+              "path": ["api", "transactions", "school", "{{school_id}}"],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Transaction Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{base_url}}/api/transactions/status/{{custom_order_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "transactions", "status", "{{custom_order_id}}"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Webhook",
+      "item": [
+        {
+          "name": "Process Webhook",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"status\": 200,\n    \"order_info\": {\n        \"order_id\": \"{{custom_order_id}}\",\n        \"order_amount\": 1000,\n        \"transaction_amount\": 1000,\n        \"gateway\": \"PhonePe\",\n        \"bank_reference\": \"YESBNK222\",\n        \"status\": \"success\",\n        \"payment_mode\": \"upi\",\n        \"payment_details\": \"success@ybl\",\n        \"Payment_message\": \"payment success\",\n        \"payment_time\": \"2024-04-23T08:14:21.945+00:00\",\n        \"error_message\": \"NA\"\n    }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/webhook",
+              "host": ["{{base_url}}"],
+              "path": ["api", "webhook"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": "your_jwt_token"
+    },
+    {
+      "key": "collect_request_id",
+      "value": "payment_collect_id"
+    },
+    {
+      "key": "school_id",
+      "value": "65b0e6293e9f76a9694d84b4"
+    },
+    {
+      "key": "custom_order_id",
+      "value": "bank_reference_id"
+    }
+  ]
+} 
